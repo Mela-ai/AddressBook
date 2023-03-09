@@ -6,12 +6,15 @@ using namespace Upp;
 #define LAYOUTFILE <AddressBookXML/AddressBook.lay>
 #include <CtrlCore/lay.h>
 
+// Address Book class 
 class AddressBook : public WithAddressBookLayout<TopWindow> {
+	// Data members 
 	WithModifyLayout<ParentCtrl> modify;
 	WithSearchLayout<ParentCtrl> search;
 	FileSel fs;
 	String  filename;
-
+	
+	// class methods 
 	void SetupSearch();
 	void Add();
 	void Change();
@@ -23,7 +26,8 @@ class AddressBook : public WithAddressBookLayout<TopWindow> {
 	void Quit();
 	void FileMenu(Bar& bar);
 	void MainMenu(Bar& bar);
-
+	
+	// type definition for AddressBook class name
 	typedef AddressBook CLASSNAME;
 
 public:
@@ -32,6 +36,7 @@ public:
 	AddressBook();
 };
 
+// Constructor
 AddressBook::AddressBook()
 {
 	CtrlLayout(*this, "Address book");
@@ -55,6 +60,7 @@ AddressBook::AddressBook()
 	menu.Set(THISBACK(MainMenu));
 }
 
+// FileMenu method
 void AddressBook::FileMenu(Bar& bar)
 {
 	bar.Add("Open..", CtrlImg::open(), THISBACK(Open));
@@ -66,11 +72,13 @@ void AddressBook::FileMenu(Bar& bar)
 	bar.Add("Quit", THISBACK(Quit));
 }
 
+// MainMenu method
 void AddressBook::MainMenu(Bar& bar)
 {
 	bar.Add("File", THISBACK(FileMenu));
 }
 
+// SetupSearch method
 void AddressBook::SetupSearch()
 {
 	search.name.Enable(search.oname);
@@ -79,6 +87,7 @@ void AddressBook::SetupSearch()
 	search.email.Enable(search.oemail);
 }
 
+// Add method
 void AddressBook::Add()
 {
 	array.Add(~modify.name, ~modify.surname, ~modify.address, ~modify.email);
@@ -87,6 +96,7 @@ void AddressBook::Add()
 	ActiveFocus(modify.name);
 }
 
+// Change method
 void AddressBook::Change()
 {
 	if(array.IsCursor()) {
@@ -97,6 +107,7 @@ void AddressBook::Change()
 	}
 }
 
+// search keyword method
 bool Contains(const String& text, const String& substr)
 {
 	for(const char *s = text; s <= text.End() - substr.GetLength(); s++)
@@ -105,6 +116,7 @@ bool Contains(const String& text, const String& substr)
 	return false;
 }
 
+// Search method
 void AddressBook::Search()
 {
 	if(!array.GetCount()) return;
@@ -125,6 +137,7 @@ void AddressBook::Search()
 	}
 }
 
+// Open method
 void AddressBook::Open()
 {
 	if(!fs.ExecuteOpen()) return;
@@ -171,6 +184,7 @@ void AddressBook::Open()
 	}
 }
 
+// Save method
 void AddressBook::Save()
 {
 	if(IsEmpty(filename)) {
@@ -190,6 +204,7 @@ void AddressBook::Save()
 		Exclamation("Error saving the file!");
 }
 
+// SaveAs method
 void AddressBook::SaveAs()
 {
 	if(!fs.ExecuteSaveAs()) return;
@@ -197,6 +212,7 @@ void AddressBook::SaveAs()
 	Save();
 }
 
+// Print method
 void AddressBook::Print()
 {
 	String qtf;
@@ -209,11 +225,13 @@ void AddressBook::Print()
 	Perform(report);
 }
 
+// Quit method
 void AddressBook::Quit()
 {
 	Break();
 }
 
+// Serialize method
 void AddressBook::Serialize(Stream& s)
 {
 	int version = 0;
@@ -223,6 +241,7 @@ void AddressBook::Serialize(Stream& s)
 	SetupSearch();
 }
 
+// APP_MAIN function -- program entry and execution
 GUI_APP_MAIN
 {
 	AddressBook ab;
